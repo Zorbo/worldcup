@@ -1,7 +1,7 @@
 package com.worldcup.demo.worldcup;
 
 import com.worldcup.demo.worldcup.entiy.Husband;
-import com.worldcup.demo.worldcup.entiy.People;
+import com.worldcup.demo.worldcup.entiy.Person;
 import com.worldcup.demo.worldcup.entiy.Wife;
 import com.worldcup.demo.worldcup.repository.PeopleRepository;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class WorldcupApplication {
 			log.info("Customers found with findAll():");
 			log.info("-------------------------------");
 
-			for (People people : repository.findAll()) {
+			for (Person people : repository.findAll()) {
 				log.info(people.toString());
 			}
 		});

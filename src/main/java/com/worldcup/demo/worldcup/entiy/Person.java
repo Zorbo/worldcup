@@ -1,19 +1,17 @@
 package com.worldcup.demo.worldcup.entiy;
 
 import com.worldcup.demo.worldcup.service.Cup;
-import java.util.List;
-import java.util.Set;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
-@Entity
+@MappedSuperclass
 @ToString
-public abstract class People {
+public abstract class Person {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -21,10 +19,10 @@ public abstract class People {
 
     private String name;
 
-    public People() {
+    public Person() {
     }
 
-    public People(String name) {
+    public Person(String name) {
         this.name = name;
     }
 
