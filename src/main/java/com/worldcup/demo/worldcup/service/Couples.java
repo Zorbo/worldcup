@@ -15,6 +15,10 @@ import lombok.Data;
 @Data
 public class Couples {
 
+    public Couples(String inputData) {
+        createCouples(inputData);
+    }
+
     private Map<Husband, Wife> couples = new HashMap<>();
 
 
@@ -30,7 +34,7 @@ public class Couples {
         return wifeList;
     }
 
-    public void createCouples(String inputData) {
+    private void createCouples(String inputData) {
         List<Husband> husbandList = createHusbandList(inputData);
         List<Wife> wifeList = createWifeList(inputData);
         for (int i = 0; i < husbandList.size(); i++) {

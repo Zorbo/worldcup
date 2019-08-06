@@ -8,8 +8,9 @@ import org.junit.Test;
 
 public class CoupleTest {
 
-    private Couples couples = new Couples();
+
     private final static String DATA = "C:\\Training\\worldcup\\src\\main\\resources\\data.txt";
+    private Couples couples = new Couples(DATA);
 
     @Test
     public void testWifeList() {
@@ -24,7 +25,6 @@ public class CoupleTest {
     @Test
     public void testCoupleMap() {
 
-        couples.createCouples(DATA);
         for (Husband h : couples.getCouples().keySet()) {
             System.out.println(h.getName());
         }
