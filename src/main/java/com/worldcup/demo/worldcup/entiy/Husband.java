@@ -6,6 +6,11 @@ import java.util.Random;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Husband entity
+ *
+ * @author tamas.kiss
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Husband extends Person implements Serializable {
@@ -16,6 +21,10 @@ public class Husband extends Person implements Serializable {
         super(name);
     }
 
+    /**
+     * Customized watchCup changing beer count
+     * @param cup The Cup
+     */
     @Override
     public void watchCup(Cup cup) {
         Random random = new Random();

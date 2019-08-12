@@ -8,6 +8,11 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * Person superclass entity
+ *
+ * @author tamas.kiss
+ */
 @Data
 @ToString
 public abstract class Person {

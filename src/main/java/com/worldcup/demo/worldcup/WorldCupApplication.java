@@ -75,6 +75,7 @@ public class WorldCupApplication extends Application {
         ObservableList<String> coupleData = FXCollections.observableArrayList(createCoupleView(couples));
         TableView<String> coupleView = new TableView<>();
         TableColumn<String, String> col1 = new TableColumn<>();
+        col1.setMinWidth(300);
         coupleView.getColumns().add(col1);
         col1.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
         coupleView.setItems(coupleData);
@@ -91,7 +92,7 @@ public class WorldCupApplication extends Application {
         husbandData = FXCollections.observableArrayList(createHusbandView(couples));
         TableView<String> husbandView = new TableView<>();
         TableColumn<String, String> husbandColumn = new TableColumn<>();
-        husbandColumn.setMinWidth(100);
+        husbandColumn.setMinWidth(300);
         husbandView.getColumns().add(husbandColumn);
         husbandColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
         husbandView.setItems(husbandData);
@@ -108,7 +109,7 @@ public class WorldCupApplication extends Application {
         wifeData = FXCollections.observableArrayList(createWifeView(couples));
         TableView<String> wifeView = new TableView<>();
         TableColumn<String, String> wifeColumn = new TableColumn<>();
-        wifeColumn.setMinWidth(100);
+        wifeColumn.setMinWidth(300);
         wifeView.getColumns().add(wifeColumn);
         wifeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
         wifeView.setItems(wifeData);
@@ -216,7 +217,7 @@ public class WorldCupApplication extends Application {
     private void updateHusband(TableView<String> husbandView, TableColumn<String, String> husbandColumn) {
         husbandView.getColumns().clear();
         husbandView.getColumns().add(husbandColumn);
-        husbandColumn.setMinWidth(100);
+        husbandColumn.setMinWidth(300);
         husbandColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
         husbandView.setItems(husbandData);
         husbandView.refresh();
@@ -247,6 +248,7 @@ public class WorldCupApplication extends Application {
     private void updateWife(TableView<String> wifeView, TableColumn<String, String> wifeColumn) {
         wifeView.getColumns().clear();
         wifeView.getColumns().add(wifeColumn);
+        wifeColumn.setMinWidth(300);
         wifeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
         wifeView.setItems(wifeData);
         wifeView.refresh();
