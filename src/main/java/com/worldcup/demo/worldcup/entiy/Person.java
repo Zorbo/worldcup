@@ -1,6 +1,7 @@
 package com.worldcup.demo.worldcup.entiy;
 
 import com.worldcup.demo.worldcup.service.Cup;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,7 +24,7 @@ public abstract class Person {
 
     private String name;
 
-    private List<Cup> watchedCups;
+    private List<String> watchedCups = new ArrayList<>();
 
     public Person() {
     }

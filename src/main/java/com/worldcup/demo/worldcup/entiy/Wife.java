@@ -27,6 +27,7 @@ public class Wife extends Person implements Serializable {
     @Override
     public void watchCup(Cup cup) {
         this.freeTime += cup.getTotalTime();
+        getWatchedCups().add(cup.getTeam1().getName() + cup.getTeam2().getName());
     }
 
 }

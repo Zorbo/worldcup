@@ -163,7 +163,7 @@ public class WorldCupApplication extends Application {
     }
 
     /**
-     * Random select couples and call watchCup() method
+     * Random select couples and call watchCup() method also check the watched matches
      *
      * @param couples the couples
      * @param cup the specific Cup
@@ -172,8 +172,19 @@ public class WorldCupApplication extends Application {
         for (Map.Entry<Husband, Wife> entry : couples.getCouples().entrySet()) {
             boolean watchMatch = new Random().nextBoolean();
             if (watchMatch) {
-                entry.getKey().watchCup(cup);
-                entry.getValue().watchCup(cup);
+                String watchedCup = cup.getTeam1().getName() + cup.getTeam2().getName();
+                if (entry.getKey().getWatchedCups().stream().noneMatch(c -> c.equals(watchedCup))) {
+                    entry.getKey().watchCup(cup);
+                    logger.info(entry.getKey().getName() + " watched: " + cup.getTeam1().getName()
+                                    + " : " + cup.getTeam2().getName());
+                    entry.getValue().watchCup(cup);
+                    logger.info(entry.getValue().getName() + " watched: " + cup.getTeam1().getName()
+                                    + " : " + cup.getTeam2().getName());
+                } else {
+                    logger.info(entry.getKey().getName() + " & " + entry.getValue().getName()
+                                    + " already watched: " + cup.getTeam1().getName()
+                                    + " : " + cup.getTeam2().getName());
+                }
             }
         }
     }
@@ -285,7 +296,6 @@ public class WorldCupApplication extends Application {
         int freeTime = wifeList.stream().mapToInt(Wife::getFreeTime).sum();
         totalFreeTime.setText("Osszesen: " + freeTime + " perc.");
     }
-
     /**
      * Stop application
      */

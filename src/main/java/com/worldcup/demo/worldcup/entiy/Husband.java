@@ -33,6 +33,7 @@ public class Husband extends Person implements Serializable {
         } else {
             this.beers += random.nextInt(6);
         }
+        getWatchedCups().add(cup.getTeam1().getName() + cup.getTeam2().getName());
     }
 
 }
