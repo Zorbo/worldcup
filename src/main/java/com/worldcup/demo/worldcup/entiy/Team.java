@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
 
@@ -16,6 +17,7 @@ import lombok.ToString;
 @Data
 @ToString
 @Entity
+@Table(name = "team")
 public class Team implements Serializable {
 
     @Id
@@ -23,11 +25,4 @@ public class Team implements Serializable {
     private Long id;
 
     private String name;
-
-    public Team() {
-    }
-
-    public Team(String name) {
-        this.name = name;
-    }
 }

@@ -1,15 +1,22 @@
 package com.worldcup.demo.worldcup;
 
+import com.worldcup.demo.worldcup.repository.TeamRepository;
 import com.worldcup.demo.worldcup.service.CupService;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CupServiceTest {
 
+    @Mock
+    TeamRepository teamRepository;
 
-
-    private final static String DATA = "C:\\Training\\worldcup\\src\\main\\resources\\data.txt";
-    private CupService cupService = new CupService();
+    @InjectMocks
+    private CupService cupService;
 
     @Test
     public void testTeamList() {

@@ -1,6 +1,7 @@
 package com.worldcup.demo.worldcup.entiy;
 
 import com.worldcup.demo.worldcup.service.CupService;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.ElementCollection;
@@ -19,7 +20,7 @@ import lombok.ToString;
 @Data
 @ToString
 @MappedSuperclass
-public abstract class Person {
+public abstract class Person implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -29,13 +30,6 @@ public abstract class Person {
 
     @ElementCollection
     private List<String> watchedCups = new ArrayList<>();
-
-    public Person() {
-    }
-
-    public Person(String name) {
-        this.name = name;
-    }
 
     public abstract void watchCup(CupService cupService);
 }

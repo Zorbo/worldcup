@@ -26,8 +26,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -38,16 +41,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 public class WorldCupApplication extends Application {
 
-    //private static final String DATA = "C:\\Training\\worldcup\\src\\main\\resources\\data.txt";
     private static final Logger logger = LoggerFactory.getLogger(WorldCupApplication.class);
     private static final String REGEX_SPLIT_COMMA = "\\s*,\\s*";
     private ConfigurableApplicationContext springContext;
-    private CupService cupService;
     private ObservableList<String> husbandData;
     private ObservableList<String> wifeData;
     private TextField teams = new TextField("");
     private TextField beerSum = new TextField("Atlagosan: " + 0 + " sor.");
     private TextField totalFreeTime = new TextField("Osszesen: " + 0 + " perc.");
+    private CoupleService coupleService;
+    private CupService cupService;
 
     public static void main(String[] args) {
         launch(args);
@@ -56,6 +59,8 @@ public class WorldCupApplication extends Application {
     @Override
     public void init() {
         springContext = SpringApplication.run(WorldCupApplication.class);
+        this.coupleService = (CoupleService) springContext.getBean("coupleService");
+        this.cupService = (CupService) springContext.getBean("cupService");
     }
 
     /**
@@ -68,7 +73,6 @@ public class WorldCupApplication extends Application {
 
         // Create resources on startup
         primaryStage.setTitle("World Cup");
-        CoupleService coupleService = new CoupleService();
         coupleService.createCouples();
         Pane root = new Pane();
         Scene scene = new Scene(root, 200, 100);
@@ -129,7 +133,8 @@ public class WorldCupApplication extends Application {
         matchButton.setLayoutX(480);
         matchButton.setLayoutY(650);
         matchButton.setOnAction(event -> {
-            this.cupService = new CupService();
+            cupService.createTeams();
+            cupService.selectTeam();
             setTeamsText(cupService);
             watchMatch(coupleService, cupService);
             setAverageBeersText(coupleService);

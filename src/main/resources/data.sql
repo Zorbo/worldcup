@@ -19,7 +19,7 @@
 --);
 
 INSERT INTO husband (name, beers) VALUES
-  ('Pista', 0),
+  ('Pista'),
   ('Jozsi', 0),
   ('Laci', 0),
   ('Geza', 0),

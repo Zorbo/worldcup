@@ -22,34 +22,30 @@ import org.springframework.stereotype.Service;
  * @author tamas.kiss
  */
 @Data
-@Service
+@Service("coupleService")
 public class CoupleService {
 
-    private Map<Husband, Wife> couples = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(CoupleService.class);
-    private List<Husband> husbandListDB = new ArrayList<>();
-    private  List<Wife> wifeListDB = new ArrayList<>();
+    private final Map<Husband, Wife> couples = new HashMap<>();
+    private final List<Husband> husbandListDB = new ArrayList<>();
+    private  final List<Wife> wifeListDB = new ArrayList<>();
 
-    /**
-     * Init Couple object
-     */
-    public CoupleService() {
+    private HusbandRepository husbandRepository;
+    private WifeRepository wifeRepository;
 
+    @Autowired
+    public CoupleService(HusbandRepository husbandRepository,
+                         WifeRepository wifeRepository) {
+        this.husbandRepository = husbandRepository;
+        this.wifeRepository = wifeRepository;
     }
 
-    @Autowired
-    HusbandRepository husbandRepository;
-
-    @Autowired
-    WifeRepository wifeRepository;
 
     /**
      * Create Husband list
      * @return Husband list
      */
     public List<Husband> createHusbandList() {
-//        List<Husband> husbandList = Arrays.stream(getLine(inputData, 0)
-//                                 .split("\\s*,\\s*")).map(Husband::new).collect(Collectors.toList());
         husbandRepository.findAll().forEach(husbandListDB::add);
         Collections.shuffle(husbandListDB);
         return husbandListDB;
@@ -60,8 +56,6 @@ public class CoupleService {
      * @return Wife list
      */
     public List<Wife> createWifeList() {
-//        List<Wife> wifeList = Arrays.stream(getLine(inputData, 1)
-//                                                .split("\\s*,\\s*")).map(Wife::new).collect(Collectors.toList());
         wifeRepository.findAll().forEach(wifeListDB::add);
         Collections.shuffle(wifeListDB);
         return wifeListDB;

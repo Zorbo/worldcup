@@ -1,8 +1,8 @@
 package com.worldcup.demo.worldcup.entiy;
 
 import com.worldcup.demo.worldcup.service.CupService;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,16 +14,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-public class Wife extends Person implements Serializable {
+@Table(name = "wife")
+public class Wife extends Person {
 
-    private int freeTime;
-
-    public Wife() {
-    }
-
-    public Wife(String name) {
-        super(name);
-    }
+    private Integer freeTime;
 
     /**
      * Customized watchCup changing summing freeTime

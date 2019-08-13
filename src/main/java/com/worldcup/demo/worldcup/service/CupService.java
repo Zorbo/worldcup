@@ -9,6 +9,7 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * This class responsible to create Cup
@@ -16,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author tamas.kiss
  */
 @Data
+@Service("cupService")
 public class CupService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CupService.class);
 
     private List<Team> teamList;
     private int totalTime;
@@ -24,45 +28,37 @@ public class CupService {
     private Team team2;
     private Random random = new Random();
     private boolean isItGood;
-    private static final Logger logger = LoggerFactory.getLogger(CupService.class);
+
+    private final TeamRepository teamRepository;
 
     @Autowired
-    TeamRepository teamRepository;
-
-    /**
-     * Init Cup object
-     */
-    public CupService() {
+    public CupService(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
         this.totalTime = 90 + random.nextInt((15 + 1));
         this.isItGood = random.nextBoolean();
-        createTeams();
-        selectTeam(this.teamList);
     }
 
     /**
      * Create teams from the input data and init the teamList
      */
-    private void createTeams() {
-//        this.teamList = Arrays.stream(getLine(inputData, 2)
-//                                          .split("\\s*,\\s*")).map(Team::new).collect(Collectors.toList());
+    public void createTeams() {
         teamRepository.findAll().forEach(this.teamList::add);
     }
 
     /**
      * Init the two teams
-     * @param teams The input Team list
      */
-    private void selectTeam(List<Team> teams) {
+    public void selectTeam() {
         boolean match = true;
-        if (teams.isEmpty() || teams.size() == 1) {
+        if (teamList.isEmpty() || teamList.size() == 1) {
             logger.warn("There is not enough Teams in the list");
-            throw new TeamException("Team list size: " + teams.size());
+            throw new TeamException("Team list size: " + teamList.size());
         }
-        this.team1 = teams.get(random.nextInt(teams.size()));
-        this.team2 = teams.get(random.nextInt(teams.size()));
+        this.team1 = teamList.get(random.nextInt(teamList.size()));
+        this.team2 = teamList.get(random.nextInt(teamList.size()));
         while (match) {
             if (team1.getName().equals(team2.getName())) {
-                this.team2 = teams.get(random.nextInt(teams.size()));
+                this.team2 = teamList.get(random.nextInt(teamList.size()));
             } else {
                 match = false;
             }
