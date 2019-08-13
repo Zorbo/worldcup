@@ -4,6 +4,7 @@ import com.worldcup.demo.worldcup.entiy.Husband;
 import com.worldcup.demo.worldcup.entiy.Wife;
 import com.worldcup.demo.worldcup.service.CoupleService;
 import com.worldcup.demo.worldcup.service.CupService;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,15 +27,14 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
+ * Build up the application, create frontend functions
+ *
  * @author tamas.kiss
  */
 @SpringBootApplication
@@ -43,12 +43,13 @@ public class WorldCupApplication extends Application {
 
     private static final Logger logger = LoggerFactory.getLogger(WorldCupApplication.class);
     private static final String REGEX_SPLIT_COMMA = "\\s*,\\s*";
+    private static final DecimalFormat FORMAT = new DecimalFormat("0.#");
     private ConfigurableApplicationContext springContext;
     private ObservableList<String> husbandData;
     private ObservableList<String> wifeData;
-    private TextField teams = new TextField("");
-    private TextField beerSum = new TextField("Atlagosan: " + 0 + " sor.");
-    private TextField totalFreeTime = new TextField("Osszesen: " + 0 + " perc.");
+    private TextField teams;
+    private TextField beerSum;
+    private TextField totalFreeTime;
     private CoupleService coupleService;
     private CupService cupService;
 
@@ -74,6 +75,7 @@ public class WorldCupApplication extends Application {
         // Create resources on startup
         primaryStage.setTitle("World Cup");
         coupleService.createCouples();
+        cupService.createTeams();
         Pane root = new Pane();
         Scene scene = new Scene(root, 200, 100);
 
@@ -133,7 +135,6 @@ public class WorldCupApplication extends Application {
         matchButton.setLayoutX(480);
         matchButton.setLayoutY(650);
         matchButton.setOnAction(event -> {
-            cupService.createTeams();
             cupService.selectTeam();
             setTeamsText(cupService);
             watchMatch(coupleService, cupService);
@@ -149,13 +150,16 @@ public class WorldCupApplication extends Application {
         });
 
         // set text views
+        teams = new TextField("");
         teams.setLayoutX(350);
         teams.setLayoutY(10);
         teams.setMinWidth(300);
         teams.setAlignment(Pos.CENTER);
+        beerSum = new TextField("Atlagosan: " + 0 + " sor.");
         beerSum.setLayoutX(400);
         beerSum.setLayoutY(510);
         beerSum.setAlignment(Pos.CENTER);
+        totalFreeTime = new TextField("Osszesen: " + 0 + " perc.");
         totalFreeTime.setLayoutX(750);
         totalFreeTime.setLayoutY(510);
         totalFreeTime.setAlignment(Pos.CENTER);
@@ -290,7 +294,7 @@ public class WorldCupApplication extends Application {
     private void setAverageBeersText(CoupleService coupleService) {
         List<Husband> husbandList = new ArrayList<>(coupleService.getCouples().keySet());
         Double beers = husbandList.stream().collect(Collectors.averagingInt(Husband::getBeers));
-        beerSum.setText("Atlagosan: " + beers + " sor.");
+        beerSum.setText("Atlagosan: " + FORMAT.format(beers) + " sor.");
     }
 
     /**

@@ -1,8 +1,9 @@
 package com.worldcup.demo.worldcup.service;
 
 import com.worldcup.demo.worldcup.entiy.Team;
-import com.worldcup.demo.worldcup.exceptions.TeamException;
+import com.worldcup.demo.worldcup.exceptions.CupException;
 import com.worldcup.demo.worldcup.repository.TeamRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class CupService {
 
     private static final Logger logger = LoggerFactory.getLogger(CupService.class);
 
-    private List<Team> teamList;
+    private List<Team> teamList = new ArrayList<>();
     private int totalTime;
     private Team team1;
     private Team team2;
@@ -39,10 +40,11 @@ public class CupService {
     }
 
     /**
-     * Create teams from the input data and init the teamList
+     * Create teams
      */
     public void createTeams() {
         teamRepository.findAll().forEach(this.teamList::add);
+        logger.info("Teams created");
     }
 
     /**
@@ -52,7 +54,7 @@ public class CupService {
         boolean match = true;
         if (teamList.isEmpty() || teamList.size() == 1) {
             logger.warn("There is not enough Teams in the list");
-            throw new TeamException("Team list size: " + teamList.size());
+            throw new CupException("Team list size: " + teamList.size());
         }
         this.team1 = teamList.get(random.nextInt(teamList.size()));
         this.team2 = teamList.get(random.nextInt(teamList.size()));
