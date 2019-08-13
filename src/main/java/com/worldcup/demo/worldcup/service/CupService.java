@@ -1,16 +1,14 @@
 package com.worldcup.demo.worldcup.service;
 
-import static com.worldcup.demo.worldcup.service.ProcessData.getLine;
-
 import com.worldcup.demo.worldcup.entiy.Team;
 import com.worldcup.demo.worldcup.exceptions.TeamException;
-import java.util.Arrays;
+import com.worldcup.demo.worldcup.repository.TeamRepository;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class responsible to create Cup
@@ -18,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author tamas.kiss
  */
 @Data
-public class Cup {
+public class CupService {
 
     private List<Team> teamList;
     private int totalTime;
@@ -26,26 +24,28 @@ public class Cup {
     private Team team2;
     private Random random = new Random();
     private boolean isItGood;
-    private static final Logger logger = LoggerFactory.getLogger(Cup.class);
+    private static final Logger logger = LoggerFactory.getLogger(CupService.class);
+
+    @Autowired
+    TeamRepository teamRepository;
 
     /**
      * Init Cup object
-     * @param inputData The input data
      */
-    public Cup(String inputData) {
+    public CupService() {
         this.totalTime = 90 + random.nextInt((15 + 1));
         this.isItGood = random.nextBoolean();
-        createTeams(inputData);
+        createTeams();
         selectTeam(this.teamList);
     }
 
     /**
      * Create teams from the input data and init the teamList
-     * @param inputData The input data
      */
-    private void createTeams(String inputData) {
-        this.teamList = Arrays.stream(getLine(inputData, 2)
-                                          .split("\\s*,\\s*")).map(Team::new).collect(Collectors.toList());
+    private void createTeams() {
+//        this.teamList = Arrays.stream(getLine(inputData, 2)
+//                                          .split("\\s*,\\s*")).map(Team::new).collect(Collectors.toList());
+        teamRepository.findAll().forEach(this.teamList::add);
     }
 
     /**

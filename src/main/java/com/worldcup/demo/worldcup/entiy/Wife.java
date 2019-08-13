@@ -1,7 +1,8 @@
 package com.worldcup.demo.worldcup.entiy;
 
-import com.worldcup.demo.worldcup.service.Cup;
+import com.worldcup.demo.worldcup.service.CupService;
 import java.io.Serializable;
+import javax.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,9 +13,13 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Entity
 public class Wife extends Person implements Serializable {
 
     private int freeTime;
+
+    public Wife() {
+    }
 
     public Wife(String name) {
         super(name);
@@ -22,12 +27,12 @@ public class Wife extends Person implements Serializable {
 
     /**
      * Customized watchCup changing summing freeTime
-     * @param cup The Cup
+     * @param cupService The Cup
      */
     @Override
-    public void watchCup(Cup cup) {
-        this.freeTime += cup.getTotalTime();
-        getWatchedCups().add(cup.getTeam1().getName() + cup.getTeam2().getName());
+    public void watchCup(CupService cupService) {
+        this.freeTime += cupService.getTotalTime();
+        getWatchedCups().add(cupService.getTeam1().getName() + cupService.getTeam2().getName());
     }
 
 }

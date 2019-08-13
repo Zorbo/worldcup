@@ -1,8 +1,9 @@
 package com.worldcup.demo.worldcup.entiy;
 
-import com.worldcup.demo.worldcup.service.Cup;
+import com.worldcup.demo.worldcup.service.CupService;
 import java.io.Serializable;
 import java.util.Random;
+import javax.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,9 +14,13 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Entity
 public class Husband extends Person implements Serializable {
 
     private int beers;
+
+    public Husband() {
+    }
 
     public Husband(String name) {
         super(name);
@@ -23,17 +28,17 @@ public class Husband extends Person implements Serializable {
 
     /**
      * Customized watchCup changing beer count
-     * @param cup The Cup
+     * @param cupService The Cup
      */
     @Override
-    public void watchCup(Cup cup) {
+    public void watchCup(CupService cupService) {
         Random random = new Random();
-        if (cup.isItGood()) {
+        if (cupService.isItGood()) {
             this.beers += random.nextInt(8) + 3;
         } else {
             this.beers += random.nextInt(6);
         }
-        getWatchedCups().add(cup.getTeam1().getName() + cup.getTeam2().getName());
+        getWatchedCups().add(cupService.getTeam1().getName() + cupService.getTeam2().getName());
     }
 
 }

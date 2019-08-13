@@ -2,8 +2,8 @@ package com.worldcup.demo.worldcup;
 
 import com.worldcup.demo.worldcup.entiy.Husband;
 import com.worldcup.demo.worldcup.entiy.Wife;
-import com.worldcup.demo.worldcup.service.Couples;
-import com.worldcup.demo.worldcup.service.Cup;
+import com.worldcup.demo.worldcup.service.CoupleService;
+import com.worldcup.demo.worldcup.service.CupService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,18 +29,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * @author tamas.kiss
  */
 @SpringBootApplication
+@EnableJpaRepositories
 public class WorldCupApplication extends Application {
 
-    private static final String DATA = "C:\\Training\\worldcup\\src\\main\\resources\\data.txt";
+    //private static final String DATA = "C:\\Training\\worldcup\\src\\main\\resources\\data.txt";
     private static final Logger logger = LoggerFactory.getLogger(WorldCupApplication.class);
     private static final String REGEX_SPLIT_COMMA = "\\s*,\\s*";
     private ConfigurableApplicationContext springContext;
-    private Cup cup;
+    private CupService cupService;
     private ObservableList<String> husbandData;
     private ObservableList<String> wifeData;
     private TextField teams = new TextField("");
@@ -66,13 +68,14 @@ public class WorldCupApplication extends Application {
 
         // Create resources on startup
         primaryStage.setTitle("World Cup");
-        Couples couples = new Couples(DATA);
+        CoupleService coupleService = new CoupleService();
+        coupleService.createCouples();
         Pane root = new Pane();
         Scene scene = new Scene(root, 200, 100);
 
         // Create couple view
         Label coupleViewLabel = new Label("Hazasparok");
-        ObservableList<String> coupleData = FXCollections.observableArrayList(createCoupleView(couples));
+        ObservableList<String> coupleData = FXCollections.observableArrayList(createCoupleView(coupleService));
         TableView<String> coupleView = new TableView<>();
         TableColumn<String, String> col1 = new TableColumn<>();
         col1.setMinWidth(300);
@@ -89,7 +92,7 @@ public class WorldCupApplication extends Application {
 
         // Create Husband view
         Label husbandLabel = new Label("Ferjek");
-        husbandData = FXCollections.observableArrayList(createHusbandView(couples));
+        husbandData = FXCollections.observableArrayList(createHusbandView(coupleService));
         TableView<String> husbandView = new TableView<>();
         TableColumn<String, String> husbandColumn = new TableColumn<>();
         husbandColumn.setMinWidth(300);
@@ -106,7 +109,7 @@ public class WorldCupApplication extends Application {
 
         //Create Wife view
         Label wifeLabel = new Label("Felesegek");
-        wifeData = FXCollections.observableArrayList(createWifeView(couples));
+        wifeData = FXCollections.observableArrayList(createWifeView(coupleService));
         TableView<String> wifeView = new TableView<>();
         TableColumn<String, String> wifeColumn = new TableColumn<>();
         wifeColumn.setMinWidth(300);
@@ -126,16 +129,16 @@ public class WorldCupApplication extends Application {
         matchButton.setLayoutX(480);
         matchButton.setLayoutY(650);
         matchButton.setOnAction(event -> {
-            this.cup = new Cup(DATA);
-            setTeamsText(cup);
-            watchMatch(couples, cup);
-            setAverageBeersText(couples);
-            setTotalFreeTimeText(couples);
+            this.cupService = new CupService();
+            setTeamsText(cupService);
+            watchMatch(coupleService, cupService);
+            setAverageBeersText(coupleService);
+            setTotalFreeTimeText(coupleService);
             husbandData.clear();
-            husbandData = FXCollections.observableArrayList(createHusbandView(couples));
+            husbandData = FXCollections.observableArrayList(createHusbandView(coupleService));
             updateHusband(husbandView, husbandColumn);
             wifeData.clear();
-            wifeData = FXCollections.observableArrayList(createWifeView(couples));
+            wifeData = FXCollections.observableArrayList(createWifeView(coupleService));
             updateWife(wifeView, wifeColumn);
             logger.info("Button event triggered");
         });
@@ -165,25 +168,24 @@ public class WorldCupApplication extends Application {
     /**
      * Random select couples and call watchCup() method also check the watched matches
      *
-     * @param couples the couples
-     * @param cup the specific Cup
+     * @param coupleService the couples
+     * @param cupService the specific Cup
      */
-    private void watchMatch(Couples couples, Cup cup) {
-        for (Map.Entry<Husband, Wife> entry : couples.getCouples().entrySet()) {
+    private void watchMatch(CoupleService coupleService, CupService cupService) {
+        for (Map.Entry<Husband, Wife> entry : coupleService.getCouples().entrySet()) {
             boolean watchMatch = new Random().nextBoolean();
             if (watchMatch) {
-                String watchedCup = cup.getTeam1().getName() + cup.getTeam2().getName();
+                String watchedCup = cupService.getTeam1().getName() + cupService.getTeam2().getName();
                 if (entry.getKey().getWatchedCups().stream().noneMatch(c -> c.equals(watchedCup))) {
-                    entry.getKey().watchCup(cup);
-                    logger.info(entry.getKey().getName() + " watched: " + cup.getTeam1().getName()
-                                    + " : " + cup.getTeam2().getName());
-                    entry.getValue().watchCup(cup);
-                    logger.info(entry.getValue().getName() + " watched: " + cup.getTeam1().getName()
-                                    + " : " + cup.getTeam2().getName());
+                    entry.getKey().watchCup(cupService);
+                    entry.getValue().watchCup(cupService);
+                    logger.info(entry.getKey().getName() + " & " + entry.getValue().getName()
+                                    + " watched: " + cupService.getTeam1().getName()
+                                    + " - " + cupService.getTeam2().getName());
                 } else {
                     logger.info(entry.getKey().getName() + " & " + entry.getValue().getName()
-                                    + " already watched: " + cup.getTeam1().getName()
-                                    + " : " + cup.getTeam2().getName());
+                                    + " already watched: " + cupService.getTeam1().getName()
+                                    + " : " + cupService.getTeam2().getName());
                 }
             }
         }
@@ -192,30 +194,30 @@ public class WorldCupApplication extends Application {
     /**
      * Create couple table view string list
      *
-     * @param couples the couples
+     * @param coupleService the couples
      * @return Initialized couple view string list
      */
-    private List<String> createCoupleView(Couples couples) {
+    private List<String> createCoupleView(CoupleService coupleService) {
         StringBuilder stringBuilder = new StringBuilder();
-        couples.getCouples().forEach((key, value) -> stringBuilder.append(key.getName())
-                                                                  .append("-")
-                                                                  .append(value.getName())
-                                                                  .append(","));
+        coupleService.getCouples().forEach((key, value) -> stringBuilder.append(key.getName())
+                                                                        .append("-")
+                                                                        .append(value.getName())
+                                                                        .append(","));
         return Arrays.asList(stringBuilder.toString().split(REGEX_SPLIT_COMMA));
     }
 
     /**
      * Create husband table view string list
      *
-     * @param couples the couples
+     * @param coupleService the couples
      * @return Initialized husband view string list
      */
-    private List<String> createHusbandView(Couples couples) {
+    private List<String> createHusbandView(CoupleService coupleService) {
         StringBuilder stringBuilder = new StringBuilder();
-        couples.getCouples().keySet().forEach(k -> stringBuilder.append(k.getName())
-                                                                .append(" - ")
-                                                                .append(k.getBeers())
-                                                                .append(" sort ivott.,"));
+        coupleService.getCouples().keySet().forEach(k -> stringBuilder.append(k.getName())
+                                                                      .append(" - ")
+                                                                      .append(k.getBeers())
+                                                                      .append(" sort ivott.,"));
         return Arrays.asList(stringBuilder.toString().split(REGEX_SPLIT_COMMA));
     }
 
@@ -237,16 +239,16 @@ public class WorldCupApplication extends Application {
     /**
      * Create wife table view string list
      *
-     * @param couples the couples
+     * @param coupleService the couples
      * @return Initialized wife view string list
      */
-    private List<String> createWifeView(Couples couples) {
+    private List<String> createWifeView(CoupleService coupleService) {
         StringBuilder stringBuilder = new StringBuilder();
-        couples.getCouples().values().forEach(v -> stringBuilder.append(v.getName())
-                                                                .append(" - ")
-                                                                .append("szabadideje: ")
-                                                                .append(v.getFreeTime())
-                                                                .append(" perc.,"));
+        coupleService.getCouples().values().forEach(v -> stringBuilder.append(v.getName())
+                                                                      .append(" - ")
+                                                                      .append("szabadideje: ")
+                                                                      .append(v.getFreeTime())
+                                                                      .append(" perc.,"));
         return Arrays.asList(stringBuilder.toString().split(REGEX_SPLIT_COMMA));
     }
 
@@ -268,20 +270,20 @@ public class WorldCupApplication extends Application {
     /**
      * Set the text of the two opposite team
      *
-     * @param cup The cup
+     * @param cupService The cup
      */
-    private void setTeamsText(Cup cup) {
-        String teamsText = cup.getTeam1().getName() + " : " + cup.getTeam2().getName();
+    private void setTeamsText(CupService cupService) {
+        String teamsText = cupService.getTeam1().getName() + " : " + cupService.getTeam2().getName();
         teams.setText(teamsText);
     }
 
     /**
      * Set the text of the average beers
      *
-     * @param couples the couples
+     * @param coupleService the couples
      */
-    private void setAverageBeersText(Couples couples) {
-        List<Husband> husbandList = new ArrayList<>(couples.getCouples().keySet());
+    private void setAverageBeersText(CoupleService coupleService) {
+        List<Husband> husbandList = new ArrayList<>(coupleService.getCouples().keySet());
         Double beers = husbandList.stream().collect(Collectors.averagingInt(Husband::getBeers));
         beerSum.setText("Atlagosan: " + beers + " sor.");
     }
@@ -289,10 +291,10 @@ public class WorldCupApplication extends Application {
     /**
      * Set the text of the total free time
      *
-     * @param couples the couples
+     * @param coupleService the couples
      */
-    private void setTotalFreeTimeText(Couples couples) {
-        List<Wife> wifeList = new ArrayList<>(couples.getCouples().values());
+    private void setTotalFreeTimeText(CoupleService coupleService) {
+        List<Wife> wifeList = new ArrayList<>(coupleService.getCouples().values());
         int freeTime = wifeList.stream().mapToInt(Wife::getFreeTime).sum();
         totalFreeTime.setText("Osszesen: " + freeTime + " perc.");
     }
